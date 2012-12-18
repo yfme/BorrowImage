@@ -7,8 +7,9 @@
 //
 
 #import "ViewController.h"
+#import "DetailViewController.h"
 
-#define Target_Path @"/System/Library/PrivateFrameworks"
+#define Target_Path @"/System/Library"//@"/System/Library/PrivateFrameworks"
 
 @interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
 @property(nonatomic, strong)UITableView     *tableView;
@@ -85,6 +86,13 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    DetailViewController *dvc = [[DetailViewController alloc] init];
+    [dvc.imageView setImage:[UIImage imageWithContentsOfFile:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]]];
+    [dvc.imageView sizeToFit];
+    [dvc.pathLabel setText:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
+    [self.navigationController pushViewController:dvc animated:YES];
+
 }
 
 
