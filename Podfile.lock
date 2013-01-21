@@ -1,0 +1,11 @@
+
+PODS:
+- PSTCollectionView (0.0.1)
+
+DEPENDENCIES:
+- PSTCollectionView
+
+SPEC CHECKSUMS:
+  PSTCollectionView: 18e71fd5e3960e2edd21361d9b0d877c8a92e0e0
+
+COCOAPODS: 0.16.0

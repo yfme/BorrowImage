@@ -8,12 +8,34 @@
 
 #import "ViewController.h"
 #import "DetailViewController.h"
+#import <PSTCollectionView.h>
 
 #define Target_Path @"/System/Library"//@"/System/Library/PrivateFrameworks"
 
-@interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
+@interface BIWallCell : PSUICollectionViewCell
+@property (nonatomic, strong) UIImageView *imageView;
+@end
+@implementation BIWallCell
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        [self.contentView addSubview:imageView];
+        self.imageView = imageView;
+        self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.2];
+    }
+    return self;
+}
+@end
+
+
+@interface ViewController ()<UITableViewDataSource, UITableViewDelegate, PSTCollectionViewDataSource, PSTCollectionViewDelegate>
 @property(nonatomic, strong)UITableView     *tableView;
 @property(nonatomic, strong)NSMutableArray  *imagePathArray;
+@property (nonatomic,weak) PSUICollectionView *collectionView;
 @end
 
 @implementation ViewController
@@ -38,6 +60,7 @@
         }
         [self performSelectorOnMainThread:@selector(updateTitle:) withObject:[NSString stringWithFormat:@"(%d)%@",[self.imagePathArray count],Target_Path] waitUntilDone:YES];
         [self.tableView reloadData];
+        [self.collectionView reloadData];
     }
 }
 
@@ -45,17 +68,35 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
-    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.tableView.dataSource = self;
-    self.tableView.delegate = self;
-    [self.view addSubview:self.tableView];
+    
+//    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
+//    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+//    self.tableView.dataSource = self;
+//    self.tableView.delegate = self;
+//    [self.view addSubview:self.tableView];
     
     //NSString *currentPath = [[NSFileManager defaultManager] currentDirectoryPath];
     //self.title = currentPath;
     
     self.imagePathArray = [NSMutableArray array];
     [NSThread detachNewThreadSelector:@selector(searchImages) toTarget:self withObject:nil];
+    
+    PSUICollectionViewFlowLayout *layout = [[PSUICollectionViewFlowLayout alloc] init];
+    layout.itemSize = CGSizeMake(75, 75);
+    layout.minimumInteritemSpacing = 4;
+    layout.minimumLineSpacing = 4;
+    layout.sectionInset = UIEdgeInsetsMake(4, 4, 4, 4);
+    
+    PSUICollectionView *collectionView = [[PSUICollectionView alloc] initWithFrame:self.view.bounds
+                                                              collectionViewLayout:layout];
+    collectionView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    collectionView.alwaysBounceVertical = YES;
+    collectionView.delegate = self;
+    collectionView.dataSource = self;
+    collectionView.backgroundColor = [UIColor lightGrayColor];
+    [collectionView registerClass:[BIWallCell class] forCellWithReuseIdentifier:@"CellReuseIdentifier"];
+    [self.view addSubview:collectionView];
+    self.collectionView = collectionView;
 }
 
 - (void)didReceiveMemoryWarning
@@ -95,5 +136,28 @@
 
 }
 
+#pragma mark - PSTUICollecionView
+
+- (NSInteger)collectionView:(PSUICollectionView *)collectionView
+     numberOfItemsInSection:(NSInteger)section
+{
+    return self.imagePathArray.count;
+}
+
+- (PSUICollectionViewCell *)collectionView:(PSUICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    BIWallCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CellReuseIdentifier" forIndexPath:indexPath];
+    cell.imageView.image = [UIImage imageWithContentsOfFile:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
+    return cell;
+}
+
+- (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    //BIWallCell *cell = (BIWallCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    //self.didSelectCollection(cell);
+    DetailViewController *dvc = [[DetailViewController alloc] init];
+    [dvc.imageView setImage:[UIImage imageWithContentsOfFile:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]]];
+    [dvc.imageView sizeToFit];
+    [dvc.pathLabel setText:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
+    [self.navigationController pushViewController:dvc animated:YES];
+}
 
 @end
