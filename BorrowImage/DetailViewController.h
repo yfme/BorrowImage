@@ -10,5 +10,5 @@
 
 @interface DetailViewController : UIViewController
 @property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UILabel *pathLabel;
+@property (nonatomic, strong) UILabel *pathLabel, *sizeLabel;
 @end

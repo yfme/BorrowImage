@@ -28,6 +28,10 @@
         self.pathLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, CGRectGetMaxY(self.imageView.frame), 320-40, 100)];
         self.pathLabel.numberOfLines = 0;
         [self.view addSubview:self.pathLabel];
+        
+        self.sizeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 30)];
+        self.sizeLabel.textAlignment = UITextAlignmentCenter;
+        [self.view addSubview:self.sizeLabel];
     }
     return self;
 }

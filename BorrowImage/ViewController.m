@@ -69,15 +69,6 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-//    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
-//    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-//    self.tableView.dataSource = self;
-//    self.tableView.delegate = self;
-//    [self.view addSubview:self.tableView];
-    
-    //NSString *currentPath = [[NSFileManager defaultManager] currentDirectoryPath];
-    //self.title = currentPath;
-    
     self.imagePathArray = [NSMutableArray array];
     [NSThread detachNewThreadSelector:@selector(searchImages) toTarget:self withObject:nil];
     
@@ -151,12 +142,13 @@
 }
 
 - (void)collectionView:(PSTCollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    //BIWallCell *cell = (BIWallCell *)[collectionView cellForItemAtIndexPath:indexPath];
-    //self.didSelectCollection(cell);
+
     DetailViewController *dvc = [[DetailViewController alloc] init];
-    [dvc.imageView setImage:[UIImage imageWithContentsOfFile:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]]];
+    UIImage *image = [UIImage imageWithContentsOfFile:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
+    [dvc.imageView setImage:image];
     [dvc.imageView sizeToFit];
     [dvc.pathLabel setText:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
+    [dvc.sizeLabel setText:[NSString stringWithFormat:@"size: %.0f x %.0f", image.size.width, image.size.height]];
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
