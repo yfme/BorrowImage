@@ -7,8 +7,9 @@
 //
 
 #import "DetailViewController.h"
+#import <MessageUI/MessageUI.h>
 
-@interface DetailViewController ()
+@interface DetailViewController () <MFMailComposeViewControllerDelegate>
 
 @end
 
@@ -32,21 +33,58 @@
         self.sizeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 30)];
         self.sizeLabel.textAlignment = UITextAlignmentCenter;
         [self.view addSubview:self.sizeLabel];
+        
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.pathLabel.frame), 320, 30)];
+        self.nameLabel.textAlignment = UITextAlignmentCenter;
+        [self.view addSubview:self.nameLabel];
     }
     return self;
+}
+
+- (void)sendMail{
+    MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
+	controller.mailComposeDelegate = self;
+	[controller setSubject:@"Share Image"];
+    NSString *bodyString = @"Share an iOS image from BorrowImage";
+	[controller setMessageBody:bodyString isHTML:NO];
+    [controller addAttachmentData:UIImagePNGRepresentation(_imageView.image)
+                         mimeType:@"image/PNG"
+                         fileName:[NSString stringWithFormat:@"%@",_nameLabel.text]];
+	[self presentModalViewController:controller animated:YES];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(sendMail)];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error{
+    switch (result) {
+        case MFMailComposeResultCancelled:
+            //
+            break;
+        case MFMailComposeResultSaved:
+            //
+            break;
+        case MFMailComposeResultSent:
+            //
+            break;
+        case MFMailComposeResultFailed:
+            //
+            break;
+            
+        default:
+            break;
+    }
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end

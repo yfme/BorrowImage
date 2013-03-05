@@ -10,7 +10,7 @@
 #import "DetailViewController.h"
 #import <PSTCollectionView.h>
 
-#define Target_Path @"/System/Library"//@"/System/Library/PrivateFrameworks"
+#define Target_Path @"/"//@"/System/Library"//@"/System/Library/PrivateFrameworks"
 
 @interface BIWallCell : PSUICollectionViewCell
 @property (nonatomic, strong) UIImageView *imageView;
@@ -149,6 +149,7 @@
     [dvc.imageView sizeToFit];
     [dvc.pathLabel setText:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImagePath"]];
     [dvc.sizeLabel setText:[NSString stringWithFormat:@"size: %.0f x %.0f", image.size.width, image.size.height]];
+    [dvc.nameLabel setText:[[self.imagePathArray objectAtIndex:indexPath.row] objectForKey:@"ImageName"]];
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
